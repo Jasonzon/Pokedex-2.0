@@ -293,7 +293,6 @@ export default {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 10px;
-  margin-top:2%;
 }
 
 #app {
@@ -303,7 +302,6 @@ export default {
   text-align: center;
   color: #2c3e50;
   width:100%;
-  margin-top:1%;
   margin-bottom:1%;
 }
 

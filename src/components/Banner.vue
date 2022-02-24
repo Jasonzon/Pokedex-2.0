@@ -21,4 +21,8 @@ export default {
 .logo-pokedex {
     padding:2%;
 }
+
+.banner {
+    background-color:#303030;
+}
 </style>
