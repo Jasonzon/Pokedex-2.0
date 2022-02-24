@@ -28,6 +28,12 @@
       </template>
       </div>
       <div>
+      <div>
+        <span>shiny:</span>
+        <div>
+        <img class="shiny" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/shiny/'+ `${pokemonInfo.id}` +'.png'" width="100" height="100" />
+        </div>
+      </div>
       <div v-if="pokemonInfo.varieties!==undefined && pokemonInfo.varieties.find(element => element.pokemon.name.includes('mega'))!==undefined">
       <span>mega:</span>
       <template v-for="pokemon in pokemonInfo.varieties" :key="pokemon.name">
@@ -201,7 +207,7 @@ export default {
   justify-content:space-between;
 }
 
-.mega, .pre-evolution, .evolves, .form {
+.mega, .pre-evolution, .evolves, .form, .shiny {
   border-radius:5px 5px 5px 5px;
   border:solid black 1px;
   background-color:#F5F5F5;
