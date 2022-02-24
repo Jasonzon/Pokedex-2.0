@@ -8,23 +8,28 @@
       <div class="flex-pokemon">
       <img class="pkmn-img" @load="loadedPokemon=true" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/' + `${pokemonInfo.id}` + '.svg'" width="350" height="350"/>
       <div class="principal">
-      <span v-if="pokemonInfo.evolves_from_species!==undefined && pokemonInfo.evolves_from_species!==null && pokemonList.find(element => element.name === pokemonInfo.evolves_from_species.name)!==undefined">evolve from:</span>
+      <div v-if="pokemonInfo.evolves_from_species!==undefined && pokemonInfo.evolves_from_species!==null && pokemonList.find(element => element.name === pokemonInfo.evolves_from_species.name)!==undefined">
+      <span>evolve from:</span>
       <div v-if="pokemonInfo.evolves_from_species!==undefined && pokemonInfo.evolves_from_species!==null">
         <img v-if="pokemonList.find(element => element.name === pokemonInfo.evolves_from_species.name)!==undefined" v-on:click="scrollToTop(pokemonInfo.evolves_from_species.name)" class="pre-evolution" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/' + `${pokemonInfo.evolves_from_species.url.match(/\d/g).join('').substring(1)}` + '.svg'" width="100" height="100" />
       </div>
-      <span v-if="evolutionChain.chain!==undefined && ((pokemonInfo.name===evolutionChain.chain.species.name) || (pokemonInfo.name!==evolutionChain.chain.species.name && pokemonInfo.name===evolutionChain.chain.evolves_to[0].species.name && evolutionChain.chain.evolves_to[0].evolves_to.length!==0))">evolves to:</span>
+      </div>
+      <div v-if="evolutionChain.chain!==undefined && ((evolutionChain.chain.species.name===pokemonInfo.name && evolutionChain.chain.evolves_to.length!==0 && pokemonList.find(element => element.name === evolutionChain.chain.evolves_to[0].species.name)!==undefined) || (evolutionChain.chain.evolves_to.length!==0 && pokemonInfo.name===evolutionChain.chain.evolves_to[0].species.name && evolutionChain.chain.evolves_to[0].evolves_to.length!==0 && pokemonList.find(element => element.name === evolutionChain.chain.evolves_to[0].evolves_to[0].species.name)!==undefined))">
+      <span>evolves to:</span>
       <template v-if="evolutionChain.chain!==undefined && pokemonInfo.name===evolutionChain.chain.species.name">
         <div v-for="pokemon in evolutionChain.chain.evolves_to" :key="pokemon.species.name">
           <img v-if="pokemonList.find(element => element.name === pokemon.species.name)!==undefined" v-on:click="scrollToTop(pokemon.species.name)" class="evolves" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/' + `${pokemon.species.url.match(/\d/g).join('').substring(1)}` + '.svg'" width="100" height="100" />
         </div>
       </template>
-      <template v-if="evolutionChain.chain!==undefined && pokemonInfo.name!==evolutionChain.chain.species.name && pokemonInfo.name===evolutionChain.chain.evolves_to[0].species.name && evolutionChain.chain.evolves_to[0].evolves_to.length!==0">
+      <template v-if="evolutionChain.chain!==undefined && evolutionChain.chain.evolves_to.length!==0 && pokemonInfo.name!==evolutionChain.chain.species.name && pokemonInfo.name===evolutionChain.chain.evolves_to[0].species.name && evolutionChain.chain.evolves_to[0].evolves_to.length!==0">
         <div v-for="pokemon in evolutionChain.chain.evolves_to[0].evolves_to" :key="pokemon.species.name">
           <img v-if="pokemonList.find(element => element.name === pokemon.species.name)!==undefined" v-on:click="scrollToTop(pokemon.species.name)" class="evolves" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/' + `${pokemon.species.url.match(/\d/g).join('').substring(1)}` + '.svg'" width="100" height="100" />
         </div>
       </template>
+      </div>
       <div>
-      <span v-if="pokemonInfo.varieties!==undefined && pokemonInfo.varieties.find(element => element.pokemon.name.includes('mega'))!==undefined">mega:</span>
+      <div v-if="pokemonInfo.varieties!==undefined && pokemonInfo.varieties.find(element => element.pokemon.name.includes('mega'))!==undefined">
+      <span>mega:</span>
       <template v-for="pokemon in pokemonInfo.varieties" :key="pokemon.name">
         <div v-if="pokemon.pokemon.name.includes('mega') && pokemonInfo.name!=='charizard' && pokemonInfo.name!=='mewtwo'">
         <img v-if="pokemonInfo.id!==undefined && pokemonInfo.id.toString().length===1" class="mega" :src="'https://www.pokencyclopedia.info/sprites/artworks/art_global-link/art_glolnk_00'+ `${pokemonInfo.id}` +'-mega.png'" width="100" height="100" />
@@ -39,6 +44,14 @@
         <img v-if="pokemonInfo.id!==undefined && pokemonInfo.name==='mewtwo'" :src="'https://www.pokencyclopedia.info/sprites/artworks/art_global-link/art_glolnk_'+ `${pokemonInfo.id}` +'-mega-y.png'" width="100" height="100" />
         </div>
       </div>
+      <div v-if="pokemonInfo.varieties!==undefined && pokemonInfo.varieties.length>1 && (pokemonInfo.varieties.find(element => element.pokemon.name.includes('alola'))!==undefined || pokemonInfo.varieties.find(element => element.pokemon.name.includes('galar'))!==undefined)">
+      <span>form:</span>
+        <div v-for="(pokemon,index) in pokemonInfo.varieties" :key="index">
+          <img v-if="pokemon.pokemon.name.includes('alola') || pokemon.pokemon.name.includes('galar')" class="form" :src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/' + `${pokemon.pokemon.url.match(/\d/g).join('').substring(1)}` + '.png'" width="100" height="100" />
+        </div>
+      </div>
+      </div>
+        <div>
         <div class="name-id">
           <span v-if="pokemonInfo.name !== undefined" class="name">{{pokemonInfo.name.charAt(0).toUpperCase() + pokemonInfo.name.slice(1)}}</span>
           <span class="id">#{{pokemonInfo.id}}</span>
@@ -48,10 +61,10 @@
           <span v-if="pokemon2Info.types!==undefined && pokemon2Info.types.length===2" :class="'pokemon-type-' + `${pokemon2Info.types[0].type.name}`">{{pokemon2Info.types[0].type.name}}</span>
           <span v-if="pokemon2Info.types!==undefined && pokemon2Info.types.length===2" :class="'pokemon-type-' + `${pokemon2Info.types[1].type.name}`">{{pokemon2Info.types[1].type.name}}</span>
         </div>
+        </div>
       </div>
       <div class="chara">
-        <span v-if="pokemonInfo.flavor_text_entries!==undefined && pokemonInfo.name!=='caterpie'" class="flavor">{{pokemonInfo.flavor_text_entries[0].flavor_text}}</span>
-        <span v-if="pokemonInfo.name==='caterpie'" class="flavor">{{pokemonInfo.flavor_text_entries[1].flavor_text}}</span>
+        <span v-if="pokemonInfo.flavor_text_entries!==undefined" class="flavor">{{pokemonInfo.flavor_text_entries.find(element => element.language.name==='en').flavor_text}}</span>
         <span v-if="pokemonInfo.genera!==undefined" class="genera">{{pokemonInfo.genera[7].genus}}</span>
         <span v-if="pokemon2Info.height!==undefined" class="height">{{parseFloat(pokemon2Info.height)/10}} m</span>
         <span v-if="pokemon2Info.weight!==undefined" class="weight">{{parseFloat(pokemon2Info.weight)/10}} kg</span>
@@ -73,7 +86,6 @@
     </div>
     <img v-if="pokemonInfo.id!==151" :src="right" alt="right-arrow" class="right-arrow" width="45" height="45" v-on:click="scrollToTop((pokemonInfo.id+1).toString())"/>
     <img v-else :src="right" alt="right-arrow" class="right-arrow-disabled" width="45" height="45"/>
-
   </div>
   <div class="pokemon-list">
   <div v-if="this.imgLoaded!==151 && !loadedFirst" class="poke">
@@ -186,10 +198,10 @@ export default {
 .principal {
   display:flex;
   flex-direction:column;
-  justify-content:flex-end;
+  justify-content:space-between;
 }
 
-.mega, .pre-evolution, .evolves {
+.mega, .pre-evolution, .evolves, .form {
   border-radius:5px 5px 5px 5px;
   border:solid black 1px;
   background-color:#F5F5F5;
@@ -417,7 +429,6 @@ p {
 }
 
 .name-id {
-  margin-top:25%;
   font-size:40px;
 }
 
