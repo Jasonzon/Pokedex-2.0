@@ -6,6 +6,10 @@
       <option :value="true">Sort by id</option>
       <option :value="false">Sort by name</option>
     </select>
+    <select class="select-reverse" :value="reverseValue" @input="$emit('update:reverseValue', $event.target.value)">
+      <option :value="true">Ascending</option>
+      <option :value="false">Descending</option>
+    </select>
   </div>
 </template>
 
@@ -18,6 +22,10 @@ export default {
       required: true
     },
     idValue: {
+      type: String,
+      required: true
+    },
+    reverseValue: {
       type: String,
       required: true
     }
@@ -35,7 +43,7 @@ export default {
   font-family:Minecraft;
 }
 
-.select-idsort {
+.select-idsort, .select-reverse {
   margin-left:2%;
   padding:0.5%;
 }

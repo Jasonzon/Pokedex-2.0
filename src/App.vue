@@ -1,6 +1,6 @@
 <template>
   <BannerComponent class="banner"/>
-  <SelectComponent v-model:modelValue="searchBar" v-model:idValue="idsort" v-bind:idValue="idsort" class="select"/>
+  <SelectComponent v-model:modelValue="searchBar" v-model:idValue="idsort" v-bind:idValue="idsort" v-model:reverseValue="reverseValue" v-bind:reverseValue="reverseValue" class="select"/>
   <div v-show="this.displayed" class="pokemon-parent">
   <img v-if="pokemonInfo.id!==1" class="left-arrow" alt="left-arrow" :src="left" width="45" height="45" v-on:click="scrollToTop((pokemonInfo.id-1).toString())"/>
   <img v-else class="left-arrow-disabled" alt="left-arrow" :src="left" width="45" height="45"/>
@@ -98,7 +98,7 @@
     <div class="ball"></div>
   </div>
     <ul class="grid" v-show="this.imgLoaded==151 || loadedFirst">
-    <template v-if="idsort==='true'">
+    <template v-if="idsort==='true' && reverseValue==='true'">
     <template v-for="(Pokemon,index) in pokemonList" :key="Pokemon.name">
       <li v-show="(index <= nbPoke || searchBar!=='') && (Pokemon.name.toUpperCase().includes(searchBar.toUpperCase()) || Pokemon.url.match(/\d/g).join('').substring(1).includes(this.searchBar))">
         <section v-on:click="scrollToTop(Pokemon.name)">
@@ -107,8 +107,26 @@
       </li>
     </template>
     </template>
-    <template v-else>
+    <template v-if="idsort==='true' && reverseValue==='false'">
+    <template v-for="(Pokemon,index) in pokemonList.slice().reverse()" :key="Pokemon.name">
+      <li v-show="(index <= nbPoke || searchBar!=='') && (Pokemon.name.toUpperCase().includes(searchBar.toUpperCase()) || Pokemon.url.match(/\d/g).join('').substring(1).includes(this.searchBar))">
+        <section v-on:click="scrollToTop(Pokemon.name)">
+          <PokemonComponent @loaded="increase" v-bind:name="Pokemon.name" v-bind:url="Pokemon.url" v-bind:id="Pokemon.url.match(/\d/g).join('').substring(1)" v-model:loaded="imgLoaded" />
+        </section>
+      </li>
+    </template>
+    </template>
+    <template v-if="idsort==='false' && reverseValue==='true'">
     <template v-for="(Pokemon,index) in pokemonList.slice(0).sort((a,b) => a.name > b.name ? 1 : -1)" :key="Pokemon.name">
+      <li v-show="(index <= nbPoke || searchBar!=='') && (Pokemon.name.toUpperCase().includes(searchBar.toUpperCase()) || Pokemon.url.match(/\d/g).join('').substring(1).includes(this.searchBar))">
+        <section v-on:click="scrollToTop(Pokemon.name)">
+          <PokemonComponent @loaded="increase" v-bind:name="Pokemon.name" v-bind:url="Pokemon.url" v-bind:id="Pokemon.url.match(/\d/g).join('').substring(1)" v-model:loaded="imgLoaded" />
+        </section>
+      </li>
+    </template>
+    </template>
+    <template v-if="idsort==='false' && reverseValue==='false'">
+    <template v-for="(Pokemon,index) in pokemonList.slice(0).sort((a,b) => a.name > b.name ? 1 : -1).slice().reverse()" :key="Pokemon.name">
       <li v-show="(index <= nbPoke || searchBar!=='') && (Pokemon.name.toUpperCase().includes(searchBar.toUpperCase()) || Pokemon.url.match(/\d/g).join('').substring(1).includes(this.searchBar))">
         <section v-on:click="scrollToTop(Pokemon.name)">
           <PokemonComponent @loaded="increase" v-bind:name="Pokemon.name" v-bind:url="Pokemon.url" v-bind:id="Pokemon.url.match(/\d/g).join('').substring(1)" v-model:loaded="imgLoaded" />
@@ -155,7 +173,8 @@ export default {
       nbPoke: 151,
       right: right,
       left: left,
-      evolutionChain: {}
+      evolutionChain: {},
+      reverseValue: "true"
     }
   },
   methods: {
